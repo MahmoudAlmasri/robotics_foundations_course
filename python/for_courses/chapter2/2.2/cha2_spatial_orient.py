@@ -3,6 +3,10 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.animation import FuncAnimation
 
+# This animation shows a rotating frame B relative to a static frame S.
+# The code updates B's x, y, and z axes by applying a rotation matrix.
+# Modify the rotation matrix R to explore different rotation behaviors.
+
 # Set up the figure and 3D axes
 fig = plt.figure(figsize=(8, 8))
 ax = fig.add_subplot(111, projection='3d')
@@ -18,9 +22,9 @@ ax.quiver(0, 0, 0, 0, 1, 0, color='lightgray', label='S-y')
 ax.quiver(0, 0, 0, 0, 0, 1, color='darkgray', label='S-z')
 
 # Rotating frame B placeholders
-frame_b_x = ax.quiver(0, 0, 0, 1, 0, 0, color='blue', label='B-x')
-frame_b_y = ax.quiver(0, 0, 0, 0, 1, 0, color='red', label='B-y')
-frame_b_z = ax.quiver(0, 0, 0, 0, 0, 1, color='green', label='B-z')
+frame_b_x = ax.quiver(0, 0, 0, 1, 0, 0, color='red', label='B-x')
+frame_b_y = ax.quiver(0, 0, 0, 0, 1, 0, color='green', label='B-y')
+frame_b_z = ax.quiver(0, 0, 0, 0, 0, 1, color='blue', label='B-z')
 
 # Legend
 ax.legend()
@@ -46,9 +50,16 @@ def update(frame):
         [0, 0, 1]
     ])
 
+    R_not_rot = np.array([
+        [np.cos(theta), -np.sin(theta), np.tan(theta)],
+        [np.sin(theta),  np.cos(theta), -np.tan(theta)],
+        [np.cos(theta),  np.tan(theta), 0.5]
+    ])
+
     R = Ry @ Rx @ Rz
     # R = Ry @ Rx
     # R = Rx @ Ry
+    # R = R_not_rot
 
     # Apply rotation to basis vectors
     x_b = R @ np.array([1, 0, 0])
