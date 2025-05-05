@@ -9,34 +9,31 @@ t = 4                    # Time in seconds
 
 # Step 2: Normalize w to get unit rotation axis
 norm_w = np.linalg.norm(w)
-w_hat = w / np.linalg.norm(w)
+w_hat = w / norm_w
 
 # Step 3: Compute total rotation angle
-theta = norm_w * theta_dot * t  # Total rotation angle (radians)
+# Total rotation angle (radians)
+theta = theta_dot * t
 
 # Print out the exponential coordinates:
 exp_coord = w_hat * theta
 print(f'Exponential coordinates w.theta\n: {exp_coord.reshape((3,1))}')
 
-# Step 4: Skew-symmetric matrix of w_hat
-def skew_symmetric(v):
-    return np.array([
-        [0, -v[2], v[1]],
-        [v[2], 0, -v[0]],
-        [-v[1], v[0], 0]
-    ])
-
-
-w_hat_skew = skew_symmetric(w_hat)
+# b- Step 4: Skew-symmetric matrix of w_hat
+w_hat_skew = np.array(
+    [
+        [0, -w_hat[2], w_hat[1]],  # row1
+        [w_hat[2], 0, -w_hat[0]],  # row2
+        [-w_hat[1], w_hat[0], 0]  # row3
+    ]
+)
 
 # Step 5: Rodrigues' rotation formula
 I = np.eye(3)
-R_ab = I + np.sin(theta) * w_hat_skew + \
-    (1 - np.cos(theta)) * (w_hat_skew @ w_hat_skew)
+w_hat_skew_sqr = np.matmul(w_hat_skew, w_hat_skew)
+R_ab = I + np.sin(theta) * w_hat_skew + (1 - np.cos(theta)) * w_hat_skew_sqr
 
 # Step 6: Function to draw a frame with separate colors per axis
-
-
 def draw_frame(ax, R, origin=[0, 0, 0], length=1.0, name=''):
     axis_colors = ['r', 'g', 'b']  # Colors: x-red, y-green, z-blue
     axis_labels = ['x', 'y', 'z']
@@ -68,7 +65,7 @@ draw_frame(ax, np.eye(3), name='A')
 # Draw frame b (after rotation)
 draw_frame(ax, R_ab, name='B')
 
-# draw the rotaiton axis
+# draw the rotation axis w
 ax.quiver(0, 0, 0,
           1, 2, 3,
           color='k', arrow_length_ratio=0.1, linewidth=1.5)
