@@ -70,7 +70,6 @@ def fk_poe(S_list, M, theta_list):
     T = T @ M
     return T
 
-L1 = L2= L3 = 1
 # Define screw axes (each 6D: [w; v]), shape = [n, 6]
 S_list = [
     np.array([0, 0, 1, 0, 0, 0]),
